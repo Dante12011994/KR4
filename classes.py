@@ -1,3 +1,4 @@
+import csv
 import json
 import os
 from abc import ABC, abstractmethod
@@ -21,6 +22,26 @@ class Get_servis_api(ABC):
         with open('vacansy.json', encoding="utf-8") as file:
             file = json.load(file)
         return file
+
+    @classmethod
+    def to_txt(cls):
+        with open('vacansy.txt', 'w', encoding="utf-8") as file:
+            for i in cls.all_vacansis:
+                file.write(f"{i['платформа']}\n"
+                           f"{i['должность']}\n"
+                           f"{i['зарплата_от']}\n"
+                           f"{i['описание']}\n"
+                           f"{i['ссылка']}\n\n")
+
+    @classmethod
+    def to_csv(cls):
+        with open('vacansy.scv', 'w', encoding="utf-8") as file:
+            names = ['платформа','должность','зарплата_от','описание','ссылка']
+            file_writer = csv.DictWriter(file, delimiter=",",
+                                         lineterminator="\r", fieldnames=names)
+            file_writer.writeheader()
+            for i in cls.all_vacansis:
+                file_writer.writerow(i)
 
 
 class Get_hh(Get_servis_api):
@@ -79,7 +100,8 @@ class Get_superjob(Get_servis_api):
                                                 'ссылка': i['link']})
 
 
-class Vacancys:
+class Vacancys(Get_servis_api):
+
     def __init__(self, platform, name, salary, description, url):
         self.platform = platform
         self.name = name
@@ -89,3 +111,8 @@ class Vacancys:
             self.salary = salary
         self.description = description
         self.url = url
+        Get_servis_api.all_vacansis.append({'платформа': self.platform,
+                                            'должность': self.name,
+                                            'зарплата_от': self.salary,
+                                            'описание': self.description,
+                                            'ссылка': self.url})
