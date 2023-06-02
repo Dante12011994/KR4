@@ -6,25 +6,31 @@ import requests
 
 
 class Get_servis_api(ABC):
+    """
+    Абстрактный класс для работы с вакансиями
+    """
     all_vacansis = []
 
     @abstractmethod
     def __init__(self):
+        """
+        Абстрактный метод для инициализации API запросов
+        """
         pass
 
     @classmethod
     def to_json(cls):
+        """
+        Сохраняет список вакансий в формате JSON
+        """
         with open('vacansy.json', 'w', encoding="utf-8") as file:
             json.dump(cls.all_vacansis, file, indent=4)
 
     @classmethod
-    def open_json(cls):
-        with open('vacansy.json', encoding="utf-8") as file:
-            file = json.load(file)
-        return file
-
-    @classmethod
     def to_txt(cls):
+        """
+        Сохраняет список вакансий в формате TXT
+        """
         with open('vacansy.txt', 'w', encoding="utf-8") as file:
             for i in cls.all_vacansis:
                 file.write(f"{i['платформа']}\n"
@@ -35,8 +41,11 @@ class Get_servis_api(ABC):
 
     @classmethod
     def to_csv(cls):
+        """
+        Сохраняет список вакансий в формате CSV
+        """
         with open('vacansy.scv', 'w', encoding="utf-8") as file:
-            names = ['платформа','должность','зарплата_от','описание','ссылка']
+            names = ['платформа', 'должность', 'зарплата_от', 'описание', 'ссылка']
             file_writer = csv.DictWriter(file, delimiter=",",
                                          lineterminator="\r", fieldnames=names)
             file_writer.writeheader()
@@ -45,11 +54,18 @@ class Get_servis_api(ABC):
 
 
 class Get_hh(Get_servis_api):
+    """
+    Класс для работы с API сервисом НН
+    """
 
     def __init__(self, word, quantity):
+        """
+        Инициализируем сервис с указанными параметрами
+        """
         self.quantity = quantity
         self.word = word
 
+        # Указываем параметры для запроса
         params = {
             'text': 'NAME:' + self.word,
             'area': 1,
@@ -75,8 +91,14 @@ class Get_hh(Get_servis_api):
 
 
 class Get_superjob(Get_servis_api):
+    """
+    Класс для работы с API сервисом SuprJob
+    """
 
     def __init__(self, word, quantity):
+        """
+        Инициализируем сервис с указанными параметрами
+        """
         self.quantity = quantity
         self.word = word
 
@@ -101,6 +123,9 @@ class Get_superjob(Get_servis_api):
 
 
 class Vacancys(Get_servis_api):
+    """
+
+    """
 
     def __init__(self, platform, name, salary, description, url):
         self.platform = platform
