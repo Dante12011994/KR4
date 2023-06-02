@@ -4,18 +4,6 @@ from abc import ABC, abstractmethod
 import requests
 
 
-# def to_json():
-#     with open('vacansy.json', 'w', encoding="utf-8") as file:
-#         json.dump(Get_servis_api.all_vacansis, file, indent=4)
-
-
-# def open_json():
-#     with open('vacansy.json', encoding="utf-8") as file:
-#         file = json.load(file)
-#         for i in file:
-#             print(i)
-
-
 class Get_servis_api(ABC):
     all_vacansis = []
 
@@ -50,9 +38,9 @@ class Get_hh(Get_servis_api):
         req = requests.get('https://api.hh.ru/vacancies', params)
         data = req.content.decode()
         req.close()
-        vacansi_list = json.loads(data)
+        vacancy_list = json.loads(data)
 
-        for i in vacansi_list['items']:
+        for i in vacancy_list['items']:
             try:
                 salary = i['salary']['from']
             except TypeError:
@@ -78,8 +66,8 @@ class Get_superjob(Get_servis_api):
         response = requests.get('https://api.superjob.ru/2.0/vacancies/',
                                 params=params,
                                 headers=headers)
-        vacansis = response.json()
-        for i in vacansis['objects']:
+        vacancys = response.json()
+        for i in vacancys['objects']:
             if i['payment_from'] != 0:
                 salary = i['payment_from']
             else:
@@ -91,10 +79,13 @@ class Get_superjob(Get_servis_api):
                                                 'ссылка': i['link']})
 
 
-class Vacansis:
+class Vacancys:
     def __init__(self, platform, name, salary, description, url):
         self.platform = platform
         self.name = name
-        self.salary = salary
+        if type(salary) == str or salary is None:
+            self.salary = 0
+        else:
+            self.salary = salary
         self.description = description
         self.url = url
